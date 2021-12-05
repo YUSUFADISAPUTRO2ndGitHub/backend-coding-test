@@ -107,35 +107,63 @@ module.exports = async (db) => {
             let row_of_page =  req.query.row_of_page;
             let query = ``;
             if(page != undefined && row_of_page != undefined){
-                let offset = (page-1)*row_of_page;
-                query = `SELECT * FROM Rides LIMIT ${row_of_page} OFFSET ${offset};`
+                if(page > -1 && row_of_page > -1){
+                    let offset = (page-1)*row_of_page;
+                    // query = `SELECT * FROM Rides LIMIT ${row_of_page} OFFSET ${offset};`
+                    db.all('SELECT * FROM Rides LIMIT ? OFFSET ?', [
+                        row_of_page,
+                        offset
+                    ], async function (err, rows){
+                        if (err) {
+                            logger.log('error', new Error(err));
+                            console.log(err)
+                            return res.send({
+                                error_code: 'SERVER_ERROR',
+                                message: 'Unknown error'
+                            });
+                        }
+        
+                        if (rows.length === 0) {
+                            return res.send({
+                                error_code: 'RIDES_NOT_FOUND_ERROR',
+                                message: 'Could not find any rides'
+                            });
+                        }
+        
+                        res.send(rows);
+                    });
+                }else{
+                    res.send({
+                        error_code: 'PAGE AND ROWS ARE NEGATIVE',
+                        message: 'Could not render negative pages or rows'
+                    });
+                }
             }else{
                 query = `SELECT * FROM Rides`
+                db.all(query, async function (err, rows) {
+                    if (err) {
+                        logger.log('error', new Error(err));
+                        console.log(err)
+                        return res.send({
+                            error_code: 'SERVER_ERROR',
+                            message: 'Unknown error'
+                        });
+                    }
+
+                    if (rows.length === 0) {
+                        return res.send({
+                            error_code: 'RIDES_NOT_FOUND_ERROR',
+                            message: 'Could not find any rides'
+                        });
+                    }
+
+                    res.send(rows);
+                });
             }
-            console.log(query)
-            db.all(query, async function (err, rows) {
-                if (err) {
-                    logger.log('error', new Error(err));
-                    console.log(err)
-                    return res.send({
-                        error_code: 'SERVER_ERROR',
-                        message: 'Unknown error'
-                    });
-                }
-
-                if (rows.length === 0) {
-                    return res.send({
-                        error_code: 'RIDES_NOT_FOUND_ERROR',
-                        message: 'Could not find any rides'
-                    });
-                }
-
-                res.send(rows);
-            });
         });
 
         app.get('/rides/:id', async (req, res) => {
-            db.all(`SELECT * FROM Rides WHERE rideID='${req.params.id}'`, function (err, rows) {
+            db.all('SELECT * FROM Rides WHERE rideID = ?', req.params.id, async function (err, rows){
                 if (err) {
                     logger.log('error', new Error(err));
                     return res.send({
