@@ -26,7 +26,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 module.exports = async (db) => {
     return new Promise(async (resolve, reject) => {
-        app.get('/health', async (req, res) => res.send('Healthy'));
+        app.get('/health', async (req, res) => {
+            return res.send('Healthy')
+        })
 
         app.post('/rides', jsonParser, async (req, res) => {
             const startLatitude = Number(req.body.start_lat);
