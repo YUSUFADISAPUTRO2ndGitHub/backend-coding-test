@@ -1,0 +1,120 @@
+This project was assigned to me as a test
+
+Routing:
+1. all routing for API is collected in /src/app.js
+2. System is running at port number 8010, which can be viewed in index.js
+
+Storage System:
+1. The database is initially set up in index.js based on the schema, which can be found at /src/schemas.js
+2. Database used: SQLITE
+
+there are 4 APIs in this backend application:
+1. The GET method call, route from the main running URL: /health, is intended as a debug API, where it will return only the text 'Healthy'
+2. The POST method call, route from the main running URL: /rides
+    intended to add data to table 'Rides'
+    with required request body in json format:
+    {
+        "start_lat": 45,
+        "start_long": 45,
+        "end_lat": 45,
+        "end_long": 45,
+        "rider_name": "a rider",
+        "driver_name": "a driver",
+        "driver_vehicle": "avanza"
+    }
+
+    these values are required, to receive the correct response
+
+    expected correct response:
+    [
+        {
+            "rideID": 1,
+            "startLat": 45,
+            "startLong": 45,
+            "endLat": 45,
+            "endLong": 45,
+            "riderName": "a rider",
+            "driverName": "a driver",
+            "driverVehicle": "avanza",
+            "created": "2021-12-06 03:40:43"
+        }
+    ]
+
+    one of the expected wrong responses:
+    {
+        "error_code": "VALIDATION_ERROR",
+        "message": "Rider name must be a non empty string"
+    }
+
+3. The GET method call, route from the main running URL: /rides, 
+    intended to gain all data from table 'Rides'
+    with expected query params to be given:
+    page,
+    row_of_page
+
+    if query params given but undefined, then 
+    {
+        error_code: 'PAGE AND ROWS ARE NEGATIVE',
+        message: 'Could not render negative pages or rows'
+    }
+
+    if query params are not provided at all then,
+    [
+        {
+            "rideID": 1,
+            "startLat": 45,
+            "startLong": 45,
+            "endLat": 45,
+            "endLong": 45,
+            "riderName": "a rider",
+            "driverName": "a driver",
+            "driverVehicle": "avanza",
+            "created": "2021-12-06 03:40:43"
+        }
+    ]
+
+    if query params are provided properly, then
+
+    [
+        {
+            "rideID": 1,
+            "startLat": 45,
+            "startLong": 45,
+            "endLat": 45,
+            "endLong": 45,
+            "riderName": "a rider",
+            "driverName": "a driver",
+            "driverVehicle": "avanza",
+            "created": "2021-12-06 03:40:43"
+        }
+    ]
+
+    based on the specified params
+
+4. The GET method call, route from the main running URL: /rides/:id, 
+    intended to gain data from table 'Rides' based on given id 
+    if id is not provided or not properly provided then,
+    {
+        "error_code": "RIDES_NOT_FOUND_ERROR",
+        "message": "Could not find any rides"
+    }
+
+    if id is provided properly then,
+    [
+        {
+            "rideID": 1,
+            "startLat": 45,
+            "startLong": 45,
+            "endLat": 45,
+            "endLong": 45,
+            "riderName": "a rider",
+            "driverName": "a driver",
+            "driverVehicle": "avanza",
+            "created": "2021-12-06 03:40:43"
+        }
+    ]
+
+in order to run:
+1. npm start
+to test with mocha, test script can be found in /tests/api.test.js:
+1. npm test

@@ -1,0 +1,12 @@
+config:
+  target: https://my.microservice.internal
+  phases:
+    - duration: 120
+      arrivalRate: 10
+      rampTo: 50
+  defaults:
+    headers:
+scenarios:
+  - flow:
+      - get:
+          url: "/"
