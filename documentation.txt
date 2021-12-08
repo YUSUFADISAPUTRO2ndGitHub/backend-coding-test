@@ -118,3 +118,6 @@ in order to run:
 1. npm start
 to test with mocha, test script can be found in /tests/api.test.js:
 1. npm test
+
+remark:
+I was not able to do artillery, since artillery requires higher version of Node installed but since the it does require to have only node js version 10 at max, I was not able to downgrade artillery.
